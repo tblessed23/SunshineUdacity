@@ -1,6 +1,8 @@
 package com.example.android.sunshine_udacity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,8 +17,49 @@ import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    // Create a field to store the weather display TextView
-    TextView mWeatherDisplayListView;
+
+
+    // Within ForecastAdapter.java /////////////////////////////////////////////////////////////////
+    // completed Add a class file called ForecastAdapter
+    // completed Extend RecyclerView.Adapter<ForecastAdapter.ForecastAdapterViewHolder>
+
+    // completed Create a private string array called mWeatherData
+
+    // completed Create the default constructor (we will pass in parameters in a later lesson)
+
+    // completed Create a class within ForecastAdapter called ForecastAdapterViewHolder
+    // cmpleted Extend RecyclerView.ViewHolder
+
+    // Within ForecastAdapterViewHolder ///////////////////////////////////////////////////////////
+    // completed Create a public final TextView variable called mWeatherTextView
+
+    // completed Create a constructor for this class that accepts a View as a parameter
+    // completed Call super(view) within the constructor for ForecastAdapterViewHolder
+    // completed Using , get a reference to this layout's TextView and save it to mWeatherTextView
+    // Within ForecastAdapterViewHolder ///////////////////////////////////////////////////////////
+
+
+    // completed Override onCreateViewHolder
+    // completed Within onCreateViewHolder, inflate the list item xml into a view
+    // completed Within onCreateViewHolder, return a new ForecastAdapterViewHolder with the above view passed in as a parameter
+
+    // completed (27) Override onBindViewHolder
+    // completed Set the text of the TextView to the weather for this list item's position
+
+    // completed Override getItemCount
+    // completed Return 0 if mWeatherData is null, or the size of mWeatherData if it is not null
+
+    // completed Create a setWeatherData method that saves the weatherData to mWeatherData
+    // completed After you save mWeatherData, call notifyDataSetChanged
+    // Within ForecastAdapter.java /////////////////////////////////////////////////////////////////
+
+
+
+
+    private RecyclerView mRecyclerView;
+
+    private ForecastAdapter mForecastAdapter;
+
 
     //Add a TextView variable for the error message display
 
@@ -30,11 +73,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
 
-        // Use findViewById to get a reference to the weather display TextView
-        mWeatherDisplayListView = (TextView)findViewById(R.id.tv_weather_data);
+            mRecyclerView = (RecyclerView)  findViewById(R.id.recyclerview_forecast);
 
 
              errorMessageTextView = (TextView) findViewById(R.id.tv_error_message_display);
+
+
+
+
+        // TODO (40) Use setHasFixedSize(true) on mRecyclerView to designate that all items in the list will have the same size
+
+        // TODO (41) set mForecastAdapter equal to a new ForecastAdapter
+
+        // TODO (42) Use mRecyclerView.setAdapter and pass in mForecastAdapter
+
+        /*
+         * A LinearLayoutManager is responsible for measuring and positioning item views within a
+         * RecyclerView into a linear list. This means that it can produce either a horizontal or
+         * vertical list depending on which parameter you pass in to the LinearLayoutManager
+         * constructor. By default, if you don't specify an orientation, you get a vertical list.
+         * In our case, we want a vertical list, so we don't need to pass in an orientation flag to
+         * the LinearLayoutManager constructor.
+         *
+         * There are other LayoutManagers available to display your data in uniform grids,
+         * staggered grids, and more! See the developer documentation for more details.
+         */
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mForecastAdapter = new ForecastAdapter();
+        mRecyclerView.setAdapter(mForecastAdapter);
+
 
             loadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         //Call loadWeatherData to perform the network request to get the weather
@@ -52,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showWeatherDataView(){
         errorMessageTextView.setVisibility(View.INVISIBLE);
-        mWeatherDisplayListView.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
 
     }
 
@@ -60,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void showErrorMessage(){
-        mWeatherDisplayListView.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
         errorMessageTextView.setVisibility(View.VISIBLE);
     }
 
@@ -113,16 +182,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String[] weatherData) {
             loadingIndicator.setVisibility(View.INVISIBLE);
             if (weatherData != null) {
-                /*
-                 * Iterate through the array and append the Strings to the TextView. The reason why we add
-                 * the "\n\n\n" after the String is to give visual separation between each String in the
-                 * TextView. Later, we'll learn about a better way to display lists of data.
-                 */
-                for (String weatherString : weatherData) {
-                    mWeatherDisplayListView.append((weatherString) + "\n\n\n");
-                }
+                showWeatherDataView();
+                // COMPLETED (45) Instead of iterating through every string, use mForecastAdapter.setWeatherData and pass in the weather data
+                mForecastAdapter.setmWeatherData(weatherData);
             } else {
-
                 showErrorMessage();
             }
         }
@@ -144,7 +207,8 @@ public class MainActivity extends AppCompatActivity {
 
         if  (menuItemThatWasSelected == R.id.action_search){
 
-            mWeatherDisplayListView.setText("");
+            mForecastAdapter.setmWeatherData(null);
+
             // Call loadWeatherData when the search menu item is clicked
             loadWeatherData();
             return true;
