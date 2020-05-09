@@ -5,7 +5,10 @@
     <!--or something similar.-->
     <string name="app_name">Sunshine-Udacity</string>
     <string name="action_search">Refresh</string>
+    <string name="action_openmap">Map</string>
+    <string name="action_weatherdetails">Share Weather Details</string>
     <string name="error_message">Failed to get results, please try again.</string>
+
     <!-- - - - - - - - - - - - - -->
     <!-- Used throughout Sunshine-->
     <!-- - - - - - - - - - - - - -->
